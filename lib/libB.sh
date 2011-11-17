@@ -20,7 +20,19 @@ function require_root {
   [[ $EUID -ne 0 ]] && punt "This script must be run as root"
 }
 
-echo $BASH_SOURCE
+# Retrieve a libB source file from an http server and require it.
+# @todo check for curl or wget
+function require_http {
+  [[ -n 1 ]] || punt "require_http needs an argument"
+  log "retrieving and requiring $1"
+  #source < <(curl -s $1)
+  #. <(curl -s $1)
+  #export `(curl -s $1)`
+  eval $(curl -s $1)
+  #source /dev/stdin <$(curl -s $1)
+  #curl -s $1 | source /dev/stdin
+}
+
 LIBBPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Search for a given bash source file and load it into the current script. If the file is not found
 # the script will punt.
@@ -35,10 +47,4 @@ function require {
   done
 }
 
-# Retrieve a libB source file from an http server and require it.
-# @todo check for curl or wget
-function require_http {
-  [[ -n 1 ]] || punt "require_http needs an argument"
-  #source < <(curl -s $1)
-  eval $(curl -s $1)
-}
+
