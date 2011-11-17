@@ -8,7 +8,7 @@ RUSER=$SUDO_USER
 function punt {
     [[ -n 1 ]] || exit 1;
     if [[ -t 1 ]]; then
-      echo -e "\e[00;31m$1\e[00m"
+      echo -e "\033[00;31m$1\033[00m"
     else
       echo -e "$1"
     fi
@@ -26,7 +26,19 @@ LIBBPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # the script will punt.
 function require {
   for lib in "$@"; do
-    [[ ! -e "$LIBBPATH/$lib.sh" ]] && punt "$lib not found in ${LIBBPATH}/${lib}.sh"
-    . ${LIBBPATH}/${lib}.sh
+    if (echo $lib | grep -q '^https\?://'); then
+      require_http $lib
+    else
+      [[ ! -e "$LIBBPATH/$lib.sh" ]] && punt "$lib not found in ${LIBBPATH}/${lib}.sh"
+      . ${LIBBPATH}/${lib}.sh
+    fi
   done
+}
+
+# Retrieve a libB source file from an http server and require it.
+# @todo check for curl or wget
+function require_http {
+  [[ -n 1 ]] || punt "require_http needs an argument"
+  #source < <(curl -s $1)
+  eval $(curl -s $1)
 }
