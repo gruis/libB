@@ -1,4 +1,4 @@
-# RUSER is the name of teh real user executing the current script even if tthe script is executed via sudo.
+# RUSER is the name of the real user executing the current script even if tthe script is executed via sudo.
 RUSER=$SUDO_USER
 [[ -z "RMUSER" ]] && RUSER=$USER
 
@@ -22,20 +22,21 @@ function require_root {
 
 # Retrieve a libB source file from an http server and require it.
 # @todo check for curl or wget
+# @todo cache the results
 function require_http {
   [[ -n 1 ]] || punt "require_http needs an argument"
   log "retrieving and requiring $1"
-  #source < <(curl -s $1)
-  #. <(curl -s $1)
-  #export `(curl -s $1)`
-  eval $(curl -s $1)
-  #source /dev/stdin <$(curl -s $1)
-  #curl -s $1 | source /dev/stdin
+  lib=$(curl -f -s $1)
+  [[ $? -ne 0 ]] && punt "unable to retrieve $1: $?"
+  eval $lib
 }
 
 LIBBPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Search for a given bash source file and load it into the current script. If the file is not found
 # the script will punt.
+# @todo search multiple locations and defined in  LIBBPATH
+# @todo as a last resort do an http request to the libB repo
+# @todo prevent require loops
 function require {
   for lib in "$@"; do
     if (echo $lib | grep -q '^https\?://'); then
