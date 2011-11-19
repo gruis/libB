@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
 source lib/libB.sh
+#LIBB_LOAD_PATH=( $LIBBPATH ./test )
+LIBB_LOAD_PATH="$LIBB_LOAD_PATH ./test"
 
 echo "requiring another lib"
-require log keys
+require log
+require keys
 
 warn "this is a warning"
 log "this is a log message"
@@ -16,3 +19,4 @@ debug "http based require worked"
 
 log "testing require loops"
 require a
+require b
