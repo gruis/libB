@@ -53,7 +53,7 @@ function require {
 
   for libdir in ${LIBB_LOAD_PATH[@]}; do
     if [[ -e "$libdir/$lib.sh" ]]; then
-      libb_loaded=("${libb_loaded[@]}" "$1")
+      libb_loaded+=($1)
       . ${libdir}/${lib}.sh
       return 0;
     fi
