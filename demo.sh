@@ -11,4 +11,8 @@ error "this is an error message"
 
 require "https://raw.github.com/gist/3e8493af52164763b7c9/echo"
 debug "http based require worked"
+
 #require "https://raw.github.com/gist/3e8493af52164763b7c9/404"
+
+log "testing require loops"
+require a

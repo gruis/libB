@@ -32,17 +32,23 @@ function require_http {
 }
 
 LIBBPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+libb_loaded=( libB )
 # Search for a given bash source file and load it into the current script. If the file is not found
 # the script will punt.
 # @todo search multiple locations and defined in  LIBBPATH
 # @todo as a last resort do an http request to the libB repo
 # @todo prevent require loops
 function require {
+  for lib in ${libb_loaded[@]}; do
+    [[ $lib == "$1" ]] && return 0;
+  done
+
   for lib in "$@"; do
     if (echo $lib | grep -q '^https\?://'); then
       require_http $lib
     else
       [[ ! -e "$LIBBPATH/$lib.sh" ]] && punt "$lib not found in ${LIBBPATH}/${lib}.sh"
+      libb_loaded=("${libb_loaded[@]}" "$1")
       . ${LIBBPATH}/${lib}.sh
     fi
   done
