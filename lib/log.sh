@@ -1,5 +1,5 @@
 # Display an error message, but don't exit.
-# If STDOUT is connected to a terminal the message will be in green.
+# If STDOUT is connected to a terminal the message will be in red.
 function error {
     [[ -n 1 ]] || return 0;
     if [[ -t 1 ]]; then
